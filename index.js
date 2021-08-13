@@ -6,7 +6,8 @@ const wss = new ws.Server({
 });
 
 const state = {
-    matrix: []
+    matrix: [],
+    wheel: 128,
 }
 
 for (let i=0; i < 64; i++) {
@@ -22,6 +23,15 @@ function sendMatrix(client) {
     }
 }
 
+function sendWheel(client) {
+    if (client.readyState === 1) {
+        client.send(JSON.stringify({
+            addr: '/wheel',
+            value: state.wheel
+        }));
+    }
+}
+
 
 const dispatcher = {
     '/matrix': (m) => {
@@ -29,6 +39,13 @@ const dispatcher = {
         state.matrix = m.matrix
         wss.clients.forEach(function each(client) {    
             sendMatrix(client)
+        });
+    },
+    '/wheel': (m) => {
+        console.log('wheel has been updated, broadcast changes to all clients')
+        state.wheel = m.value
+        wss.clients.forEach(function each(client) {    
+            sendWheel(client)
         });
     },
     '/get-matrix': (_, client) => { 
@@ -58,5 +75,6 @@ wss.on('connection', function connection(ws, _, client) {
     });
 
     sendMatrix(ws)
+    sendWheel(ws)
 });
 
