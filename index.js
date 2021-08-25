@@ -63,6 +63,12 @@ const clients = {}
 wss.on('connection', function connection(ws, _, client) {
     console.log('client connected')
     ws.isAlive = true
+    ws.on('ping', function () { console.log('ping received'); ws.send('pong'); ws.isAlive = true; })
+    ws.on('pong', function () { console.log('pong received'); ws.isAlive = true; })
+    console.log(client);
+    setInterval(() => {
+        ws.send('ping')
+    }, 1000)
     ws.on('message', function incoming(message) {
         console.log('received: %s', message);
         try {
