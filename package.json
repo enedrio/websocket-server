@@ -3,6 +3,7 @@
   "version": "1.0.0",
   "description": "A websocket server to allow all parts of the installation to communicate safely",
   "main": "index.js",
+  "bin": "index.js",
   "author": "Eric Busch",
   "license": "MIT",
   "dependencies": {
@@ -11,8 +12,15 @@
     "utf-8-validate": "^5.0.5",
     "ws": "^7.5.3"
   },
+  "pkg": {
+    "outputPath": "dist"
+  },
   "scripts": {
     "serve": "node index.js",
-    "client": "node client.js"
+    "client": "node client.js",
+    "build": "pkg package.json"
+  },
+  "devDependencies": {
+    "pkg": "^5.3.1"
   }
 }

@@ -84,3 +84,4 @@ wss.on('connection', function connection(ws, _, client) {
     sendWheel(ws)
 });
 
+console.log('listening on port 8080')
