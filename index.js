@@ -8,6 +8,7 @@ const wss = new ws.Server({
 const state = {
     matrix: [],
     wheel: 128,
+    lines: 1,
 }
 
 for (let i=0; i < 64; i++) {
@@ -32,6 +33,15 @@ function sendWheel(client) {
     }
 }
 
+function sendLines(client) {
+    if (client.readyState === 1) {
+        client.send(JSON.stringify({
+            addr: '/lines',
+            value: state.lines
+        }));
+    }
+}
+
 
 const dispatcher = {
     '/matrix': (m) => {
@@ -46,6 +56,13 @@ const dispatcher = {
         state.wheel = m.value
         wss.clients.forEach(function each(client) {    
             sendWheel(client)
+        });
+    },
+    '/lines': (m) => {
+        console.log('number of lines has changed')
+        state.lines = m.value
+        wss.clients.forEach(function each(client) {    
+            sendLines(client)
         });
     },
     '/get-matrix': (_, client) => { 
@@ -82,6 +99,7 @@ wss.on('connection', function connection(ws, _, client) {
 
     sendMatrix(ws)
     sendWheel(ws)
+    sendLines(ws)
 });
 
 console.log('listening on port 8080')
